@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Judul utama -->
+  <title>Hasil Agenda Kalurahan Bantul – Preview & Cetak</title>
+
+  <!-- Deskripsi untuk Google -->
+  <meta name="description" content="Preview akhir agenda kegiatan kalurahan Kabupaten Bantul. Format siap cetak untuk arsip resmi Lurah, Carik, dan staf administrasi.">
+
+  <!-- Kata kunci -->
+  <meta name="keywords" content="hasil agenda kalurahan, preview agenda bantul, cetak agenda kalurahan, format agenda resmi, parasamya bantul, trirenggo">
+
+  <!-- Penulis & hak cipta -->
+  <meta name="author" content="Admin Kalurahan Bantul">
+  <meta name="copyright" content="Pemerintah Kalurahan Kabupaten Bantul">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Hasil Agenda Kalurahan Bantul – Siap Cetak">
+  <meta property="og:description" content="Preview resmi agenda kegiatan kalurahan dalam format siap cetak. Dikembangkan untuk mendukung administrasi pemerintahan desa di Bantul, DIY.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://namadomain-anda.github.io/agenda-kalurahan/hasil.html">
+  <meta property="og:image" content="https://via.placeholder.com/1200x630/1e40af/ffffff?text=Hasil+Agenda+Kalurahan+Bantul">
+  <meta property="og:locale" content="id_ID">
+
+  <!-- Favicon -->
+  <link rel="icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+
+  <!-- Warna tema -->
+  <meta name="theme-color" content="#1e40af">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: 
+        linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 64, 175, 0.75)),
+        url('https://bantulkab.go.id/assets/img/gedung-parasamya.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f8fafc;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #0f172a;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      background: #1e40af;
+      color: white;
+      padding: 28px 32px;
+      text-align: center;
+      position: relative;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .header::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #d97706, #f59e0b, #d97706);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .agenda-content {
+      padding: 36px;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 17px;
+      line-height: 2.2;
+      white-space: pre-wrap;
+      min-height: 260px;
+      position: relative;
+    }
+
+    /* Sembunyikan ikon saat cetak */
+    @media print {
+      .icon { display: none !important; }
+      body {
+        background: white !important;
+        color: black !important;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        border-radius: 0;
+        background: white !important;
+      }
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 260px;
+      color: #64748b;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .footer-info {
+      text-align: center;
+      padding: 16px;
+      color: #64748b;
+      font-size: 13px;
+      background: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>AGENDA KEGIATAN KALURAHAN</h1>
+  </div>
+
+  <div class="agenda-content" id="agendaContent">
+    <div class="empty-state">
+      <p>🕗 Menunggu data agenda...</p>
+      <p>Silakan isi form di halaman input.</p>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    Dokumen ini diperbarui secara real-time dari aplikasi agenda kalurahan.
+  </div>
+</div>
+
+<script>
+function tampilkanAgenda() {
+  try {
+    const dataStr = localStorage.getItem('agenda_preview');
+    if (!dataStr) return;
+
+    const data = JSON.parse(dataStr);
+    
+    if (!data.tanggal || !data.acara || !data.tempat || !data.hadir) {
+      document.getElementById('agendaContent').innerHTML = `
+        <div class="empty-state">
+          <p>⚠️ Data belum lengkap</p>
+          <p>Lengkapi semua kolom di form input.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const date = new Date(data.tanggal);
+    const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][date.getDay()];
+    const bulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][date.getMonth()];
+    const tglFormat = `${hari}, ${date.getDate()} ${bulan} ${date.getFullYear()}`;
+
+    // Tambahkan ikon di depan setiap bagian
+    const teksDenganIkon = 
+      `📅 ${tglFormat}\n` +
+      `⏰ ${data.jam}\n` +
+      `🗓️ ${data.acara}\n` +
+      `🏠 di ${data.tempat}\n` +
+      `👥 Hadir:\n${data.hadir}`;
+
+    document.getElementById('agendaContent').textContent = teksDenganIkon;
+  } catch (e) {
+    console.error("Error:", e);
+    document.getElementById('agendaContent').innerHTML = `<div class="empty-state"><p>❌ Gagal memuat data</p></div>`;
+  }
+}
+
+setInterval(tampilkanAgenda, 300);
+tampilkanAgenda();
+</script>
+
+</body>
+</html>
